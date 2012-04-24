@@ -1,4 +1,8 @@
 #!/usr/bin/env node
+/**
+  Copyright (C) 2012 Jason Dooley
+  Licensed under MIT
+*/
 
 var fs = require('fs'), path = require('path'),
   aparser = require('aparser'),
