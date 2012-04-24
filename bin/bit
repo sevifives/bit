@@ -1,12 +1,32 @@
 #!/usr/bin/env node
 
-var fs = require('fs'),
+var fs = require('fs'), path = require('path'),
   aparser = require('aparser'),
   Bit, project;
 
 Bit = {
-  initialize: function (args) {
-    console.log('initialize',args);
+  initialize: function () {
+    var location = process.env.PWD,
+      directory = location+'/.bit',
+      self = this;
+
+    path.exists(directory, function (exists) {
+      if (exists) {
+        console.log("Bit is already initialized");
+      } else {
+        self._createBitConfig(directory);
+      }
+    });
+  },
+
+  _createBitConfig: function (dir) {
+    var configFile = dir+'/config.json', config = {};
+    fs.mkdir(dir);
+    config.root = dir;
+    config.repositories = {};
+    fs.writeFile(configFile,JSON.stringify(config), function (err) {
+      console.log(err ? "Error creating Bit config." : "Bit initialized successfully.");
+    });
   },
 
   getConfig: function () {
@@ -47,4 +67,4 @@ aparser.on('add-repository',function (arg,idx) {
   Bit.addRepository(arg);
 });
 
-aparser.parser(process.argv);
+aparser.parse(process.argv);
