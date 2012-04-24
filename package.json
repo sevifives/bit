@@ -1,0 +1,18 @@
+{
+  "name": "bit",
+  "description": "A multi-repository git tool",
+  "version": "0.1",
+  "author": "Jason Dooley <jd@sevif.me>",
+  "contributors": [ 
+    { "name": "Jason Dooley", "email": "jd@sevif.me" }
+  ],
+  "dependencies": {
+    "aparser":">=0.0.2"
+  },
+  "publishConfig": { "tag": "0.1" },
+  "keywords": ["git","multi-repository","tool"],
+  "repository": "git://github.com/sevifives/bit",
+  "main": "index",
+  "bin": { "bit": "./bin/bit" },
+  "engines": { "node":">= 0.5.0" }
+}

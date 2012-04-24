@@ -1,0 +1,50 @@
+#!/usr/bin/env node
+
+var fs = require('fs'),
+  aparser = require('aparser'),
+  Bit, project;
+
+Bit = {
+  initialize: function (args) {
+    console.log('initialize',args);
+  },
+
+  getConfig: function () {
+
+  },
+
+  writeConfig: function (config) {
+
+  },
+
+  addRepository: function (args) {
+    console.log('addRepository',args);
+  },
+
+  performOn: function (repoName,args) {
+
+  },
+
+  removeRepository: function (names) {
+
+  },
+
+  perform: function (todo,name) {
+
+  },
+
+  proceed: function (args) {
+
+  }
+};
+
+
+aparser.on('init',function (arg,idx) {
+  Bit.initialize(arg);
+});
+
+aparser.on('add-repository',function (arg,idx) {
+  Bit.addRepository(arg);
+});
+
+aparser.parser(process.argv);
