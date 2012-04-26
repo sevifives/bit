@@ -4,13 +4,21 @@
   Licensed under MIT
 */
 
-var fs = require('fs'), path = require('path'),
-  aparser = require('aparser'),
-  Bit, project;
+var fs = require('fs'),
+  path = require('path'),
+  Bit, project, argv = process.argv,
+  action, params;
+
+function puts(error, stdout, stderr) { util.puts(stdout); }
 
 Bit = {
-  initialize: function () {
-    var location = process.env.PWD,
+  initializeNew: function () {
+    var path = process.env.PWD;
+    this.initialize(path);
+  },
+
+  initialize: function (pathName,repos) {
+    var location = pathName || process.env.PWD,
       directory = location+'/.bit',
       self = this;
 
@@ -18,42 +26,66 @@ Bit = {
       if (exists) {
         console.log("Bit is already initialized");
       } else {
-        self._createBitConfig(directory);
+        self._createBitConfig(directory,repos);
       }
     });
   },
 
-  _createBitConfig: function (dir) {
+  _createBitConfig: function (dir,repos) {
     var configFile = dir+'/config.json', config = {};
     fs.mkdir(dir);
     config.root = dir;
-    config.repositories = {};
+    config.repositories = repos || {};
     fs.writeFile(configFile,JSON.stringify(config), function (err) {
       console.log(err ? "Error creating Bit config." : "Bit initialized successfully.");
     });
   },
 
-  getConfig: function () {
-
+  getConfig: function (callback) {
+    var location = process.env.PWD;
+    return require(location+'/.bit/config.json');
   },
 
-  writeConfig: function (config) {
+  writeConfig: function (path,config,callback) {
+    var location = path || process.env.PWD;
+    fs.writeFile(location+'/.bit/config.json', JSON.stringify(config), function (err) {
+      if (callback) callback.call(this,err);
+    });
+  },
 
+  removeBit: function (path) {
+    if (!path) path = process.env.PWD;
+    fs.rmdir(path+'/.bit');
+    console.log("Bit has been removed from "+path);
   },
 
   addRepository: function (args) {
-    console.log('addRepository',args);
+    var config = this.getConfig(),
+      name = args[0], path = args[1];
+
+    if (!config.repositories[name]) {
+      config.repositories[name] = path;
+      this.initialize(path, {parent: process.env.PWD});
+      this.writeConfig(null,config);
+    } else {
+      console.log('Bit already following this repository');
+    }
   },
 
-  performOn: function (repoName,args) {
+  performOn: function (argsArray) {
+    var name = argsArray.shift(),
+      config = this.getConfig();
 
+    this._perform(name,config.repositories[name],argsArray);
+  },
+
+  _perform: function (repoName,path,args) {
+    if (repoName) console.log("# "+repoName+" git "+args);
+    if (!path.match(/^\//)) path+='/';
+    exec('git --git-dir '+path+'.git '+args.join(' '), puts);
   },
 
   removeRepository: function (names) {
-
-  },
-
-  perform: function (todo,name) {
 
   },
 
@@ -62,13 +94,28 @@ Bit = {
   }
 };
 
+action = argv[2];
+params = argv.slice(3,argv.length);
 
-aparser.on('init',function (arg,idx) {
-  Bit.initialize(arg);
-});
+switch (action) {
+  case 'init':
+    Bit.initializeNew();
+    break;
+  case 'add-repository':
+  case 'add':
+  case '-a':
+    Bit.addRepository(params);
+    break;
+  case 'remove-repository':
+  case 'remove':
+  case '-r':
+    Bit.removeRepository(params);
+    break;
+  case 'on':
+    Bit.performOn(params);
+    break;
+  default:
+    console.log("Bit needs commands!");
+}
 
-aparser.on('add-repository',function (arg,idx) {
-  Bit.addRepository(arg);
-});
 
-aparser.parse(process.argv);
