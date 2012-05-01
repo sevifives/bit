@@ -56,6 +56,15 @@ Bit = {
     });
   },
 
+  list: function () {
+    var config = this.getConfig(), repos = config.repositories;
+
+    console.log('root: ', config.root);
+    for (var repo in repos) {
+      console.log(repo+': ', repos[repo]);
+    }
+  },
+
   removeBit: function (path) {
     if (!path) path = process.env.PWD;
     fs.rmdir(path+'/.bit');
@@ -124,6 +133,9 @@ switch (action) {
     break;
   case 'on':
     Bit.performOn(params);
+    break;
+  case 'list':
+    Bit.list();
     break;
   default:
     Bit.proceed(argv.slice(2, argv.length));
