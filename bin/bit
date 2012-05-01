@@ -7,6 +7,7 @@
 var fs = require('fs'),
   path = require('path'),
   Bit, project, argv = process.argv,
+  util = require('util'),
   action, params;
 
 function puts(error, stdout, stderr) { util.puts(stdout); }
@@ -80,9 +81,13 @@ Bit = {
   },
 
   _perform: function (repoName,path,args) {
+    var toPerform = args.join(' '), exec = require('child_process').exec;
     if (repoName) console.log("# "+repoName+" git "+args);
-    if (!path.match(/^\//)) path+='/';
-    exec('git --git-dir '+path+'.git '+args.join(' '), puts);
+    
+    if (path && !path.match(/^\//)) path+='/';
+    
+    if (path) { exec('git --git-dir '+path+'.git '+toPerform, puts); }
+    else { exec('git '+toPerform, puts); }
   },
 
   removeRepository: function (names) {
@@ -90,7 +95,12 @@ Bit = {
   },
 
   proceed: function (args) {
+    var config = this.getConfig(), repos = config.repositories;
+    this._perform(null,null,args);
 
+    for (var repo in repos) {
+      this._perform(repo, repos[repo], args);
+    }
   }
 };
 
@@ -115,7 +125,7 @@ switch (action) {
     Bit.performOn(params);
     break;
   default:
-    console.log("Bit needs commands!");
+    Bit.proceed(argv.slice(2, argv.length));
 }
 
 
