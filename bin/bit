@@ -87,7 +87,6 @@ Bit = {
     if (path && !path.match(/^\//)) path+='/';
     
     if (path) { exec('git --git-dir '+path+'.git '+toPerform, puts); }
-    else { exec('git '+toPerform, puts); }
   },
 
   removeRepository: function (names) {
@@ -96,7 +95,7 @@ Bit = {
 
   proceed: function (args) {
     var config = this.getConfig(), repos = config.repositories;
-    this._perform(null,null,args);
+    this._perform(null,repos.root,args);
 
     for (var repo in repos) {
       this._perform(repo, repos[repo], args);
