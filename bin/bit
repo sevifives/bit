@@ -20,10 +20,12 @@ Bit = {
 
   initialize: function (pathName,repos) {
     var location = pathName || process.env.PWD,
-      directory = location+'/.bit',
+      directory = location,
       self = this;
 
-    path.exists(directory, function (exists) {
+    if (directory.match(/\/$/)) directory = directory.substr(0,directory.length-1);
+
+    path.exists(directory+'/.bit', function (exists) {
       if (exists) {
         console.log("Bit is already initialized");
       } else {
@@ -33,8 +35,8 @@ Bit = {
   },
 
   _createBitConfig: function (dir,repos) {
-    var configFile = dir+'/config.json', config = {};
-    fs.mkdir(dir);
+    var configFile = dir+'/.bit/config.json', config = {};
+    fs.mkdir(dir+'/.bit');
     config.root = dir;
     config.repositories = repos || {};
     fs.writeFile(configFile,JSON.stringify(config), function (err) {
@@ -82,9 +84,9 @@ Bit = {
 
   _perform: function (repoName,path,args) {
     var toPerform = args.join(' '), exec = require('child_process').exec;
-    if (repoName) console.log("# "+repoName+" git "+args);
+    if (repoName) console.log("# "+ (repoName ? repoName : 'root') +" git "+args);
     
-    if (path && !path.match(/^\//)) path+='/';
+    if (path && !path.match(/\/$/)) path+='/';
     
     if (path) { exec('git --git-dir '+path+'.git '+toPerform, puts); }
   },
@@ -95,7 +97,7 @@ Bit = {
 
   proceed: function (args) {
     var config = this.getConfig(), repos = config.repositories;
-    this._perform(null,repos.root,args);
+    this._perform('root',config.root,args);
 
     for (var repo in repos) {
       this._perform(repo, repos[repo], args);
