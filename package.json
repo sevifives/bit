@@ -6,9 +6,7 @@
   "contributors": [ 
     { "name": "Jason Dooley", "email": "jd@sevif.me" }
   ],
-  "dependencies": {
-    "aparser":">=0.0.2"
-  },
+  "dependencies": {},
   "publishConfig": { "tag": "0.1" },
   "keywords": ["git","multi-repository","tool"],
   "repository": "git://github.com/sevifives/bit",
