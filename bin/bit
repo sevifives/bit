@@ -97,7 +97,7 @@ Bit = {
     
     if (path && !path.match(/\/$/)) path+='/';
     
-    if (path) { exec('git --git-dir '+path+'.git '+toPerform, puts); }
+    if (path) { exec('git --git-dir='+path+'.git --work-tree='+path+' '+toPerform, puts); }
   },
 
   removeRepository: function (names) {
