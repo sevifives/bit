@@ -1,3 +1,4 @@
+[![build status](https://secure.travis-ci.org/sevifives/bit.png)](http://travis-ci.org/sevifives/bit)
 bit
 ===
 
