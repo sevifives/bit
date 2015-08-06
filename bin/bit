@@ -10,8 +10,6 @@ var fs = require('fs'),
   util = require('util'),
   action, params;
 
-function puts(error, stdout, stderr) { util.puts(stdout); }
-
 Bit = {
   initializeNew: function () {
     var path = process.env.PWD;
@@ -93,11 +91,14 @@ Bit = {
 
   _perform: function (repoName,path,args) {
     var toPerform = args.join(' '), exec = require('child_process').exec;
-    if (repoName) console.log("# "+ (repoName ? repoName : 'root') +" git "+args);
-    
     if (path && !path.match(/\/$/)) path+='/';
     
-    if (path) { exec('git --git-dir='+path+'.git --work-tree='+path+' '+toPerform, puts); }
+    if (path) {
+      exec('git --git-dir='+path+'.git --work-tree='+path+' '+toPerform, function(error, stdout, stderr){
+        console.log("# "+ (repoName ? repoName : 'root') +" git "+args);
+        util.puts(stdout);
+      });
+    }
   },
 
   removeRepository: function (names) {
