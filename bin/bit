@@ -23,7 +23,7 @@ Bit = {
 
     if (directory.match(/\/$/)) directory = directory.substr(0,directory.length-1);
 
-    path.exists(directory+'/.bit', function (exists) {
+    fs.exists(directory+'/.bit', function (exists) {
       if (exists) {
         console.log("Bit is already initialized");
       } else {
