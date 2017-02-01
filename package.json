@@ -7,7 +7,7 @@
     { "name": "Jason Dooley", "email": "jd@sevif.me" }
   ],
   "dependencies": {},
-  "publishConfig": { "tag": "0.0.2" },
+  "publishConfig": { "tag": "0.0.3" },
   "keywords": ["git","multi-repository","tool"],
   "repository": "git://github.com/sevifives/bit",
   "main": "index",
