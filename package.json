@@ -1,7 +1,7 @@
 {
   "name": "bit",
   "description": "A multi-repository git tool",
-  "version": "0.0.9",
+  "version": "1.0.1",
   "author": "Jason Dooley <jd@sevif.me>",
   "contributors": [
     {
@@ -11,7 +11,7 @@
   ],
   "dependencies": {},
   "publishConfig": {
-    "tag": "0.0.9"
+    "tag": "1.0.1"
   },
   "keywords": [
     "git",
