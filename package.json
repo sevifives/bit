@@ -1,7 +1,7 @@
 {
   "name": "bit",
   "description": "A multi-repository git tool",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "author": "Jason Dooley <jd@sevif.me>",
   "contributors": [
     {
