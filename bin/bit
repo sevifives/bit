@@ -98,7 +98,7 @@ Bit = {
   _perform: function (repoName,path,args) {
     var toPerform = args.join(' '), exec = require('child_process').exec;
     if (path && !path.match(/\/$/)) path+='/';
-    
+
     if (path) {
       exec('git --git-dir='+path+'.git --work-tree='+path+' '+toPerform, function(error, stdout, stderr){
         console.log("# "+ (repoName ? repoName : 'root') +" git "+args);
@@ -108,7 +108,22 @@ Bit = {
   },
 
   removeRepository: function (names) {
+    if (names === null || names.length === 0) { return; }
 
+    var config = this.getConfig(), nn, r;
+
+    for (var i=0,l=names.length;i<l;i+=1) {
+      nn = names[i];
+
+      r = config.repositories[nn];
+      if (r === null || r === undefined) {
+        console.log("Repo does not exist: ", nn);
+        return;
+      }
+
+      delete config.repositories[nn];
+      console.log("Removed ", nn);
+    }
   },
 
   proceed: function (args) {
