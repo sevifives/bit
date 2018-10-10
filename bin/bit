@@ -101,8 +101,15 @@ Bit = {
 
     if (path) {
       exec('git --git-dir='+path+'.git --work-tree='+path+' '+toPerform, function(error, stdout, stderr){
-        console.log("# "+ (repoName ? repoName : 'root') +" git "+args);
-        console.log(stdout);
+        console.log((repoName ? repoName : 'root') + "> git " + toPerform);
+
+        if (error) {
+          console.log(stderr);
+        } else if (!!stdout) {
+          console.log(stdout);
+        } else {
+          console.log("No output");
+        }
       });
     }
   },
