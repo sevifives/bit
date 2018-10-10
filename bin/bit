@@ -96,8 +96,12 @@ Bit = {
   },
 
   _perform: function (repoName,path,args) {
-    var toPerform = args.join(' '), exec = require('child_process').exec;
+    var toPerform = args.join(' '), exec = require('child_process').exec, fc;
     if (path && !path.match(/\/$/)) path+='/';
+
+    fc = path[0];
+
+    if(fc !=="/" && fc !== "~") { path = process.cwd() + "/" + path; }
 
     if (path) {
       exec('git --git-dir='+path+'.git --work-tree='+path+' '+toPerform, function(error, stdout, stderr){
