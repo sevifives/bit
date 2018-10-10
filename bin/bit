@@ -23,8 +23,8 @@ Bit = {
 
     if (directory.match(/\/$/)) directory = directory.substr(0,directory.length-1);
 
-    fs.exists(directory+'/.bit', function (exists) {
-      if (exists) {
+    fs.stat(directory+'/.bit', function (err, stats) {
+      if (!!stats) {
         console.log("Bit is already initialized");
       } else {
         self._createBitConfig(directory,repos);
