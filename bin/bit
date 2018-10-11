@@ -48,9 +48,15 @@ Bit = {
     });
   },
 
-  getConfig: function (callback) {
+  getConfig: function (cb) {
     var location = process.env.PWD;
-    return require(location+'/.bit/config.json');
+
+    if (!cb) {
+      var cfg = fs.readFileSync(location+'/.bit/config.json');
+      return cfg;
+    } else {
+      fs.readFile(location+'/.bit/config.json','utf8', cb);
+    }
   },
 
   writeConfig: function (path,config,callback) {
@@ -118,6 +124,18 @@ Bit = {
     }
   },
 
+  _basicPerform: function (args) {
+    var ex = require('child_process').exec
+    ex("git " + args.join(" "), function (error, stdout, stderr) {
+      if (!!error) {
+        console.log(stderr);
+        return;
+      }
+
+      console.log(stdout);
+    });
+  },
+
   removeRepository: function (names) {
     if (names === null || names.length === 0) { return; }
 
@@ -138,12 +156,26 @@ Bit = {
   },
 
   proceed: function (args) {
-    var config = this.getConfig(), repos = config.repositories;
-    this._perform('root',config.root,args);
+    var self = this;
 
-    for (var repo in repos) {
-      this._perform(repo, repos[repo], args);
-    }
+    var r = function (error, data) {
+      if (!!error) {
+        console.log("=== Bit is not initialized - reverting to basic git command ===\n");
+        self._basicPerform(args);
+        return;
+      }
+
+      var cfg = JSON.parse(data);
+      var repos = cfg.repositories;
+
+      self._perform('root', cfg.root, args);
+
+      for (var repo in repos) {
+        self._perform(repo, repos[repo], args);
+      }
+    };
+
+    this.getConfig(r);
   }
 };
 
