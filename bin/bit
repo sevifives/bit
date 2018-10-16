@@ -102,40 +102,45 @@ Bit = {
   },
 
   _perform: function (repoName,path,args) {
-    var toPerform = args.join(' '), exec = require('child_process').exec, fc;
-    if (path && !path.match(/\/$/)) path+='/';
+    var toPerform = args.join(' '),
+    sp = require('child_process').spawn,
+    fc;
+  
+    if (path && !path.match(/\/$/)) { path+='/'; }
 
     fc = path[0];
 
     if(fc !=="/" && fc !== "~") { path = process.cwd() + "/" + path; }
 
     if (path) {
-      exec('git --git-dir='+path+'.git --work-tree='+path+' '+toPerform, function(error, stdout, stderr){
-        console.log((repoName ? repoName : 'root') + "> git " + toPerform);
+      var _args = ['--git-dir='+path+'.git', '--work-tree='+path];
 
-        if (error) {
-          console.log(stderr);
-        } else if (!!stdout) {
-          console.log(stdout);
-        } else {
-          console.log("No output");
-        }
+      var g = sp('git', _args.concat(args));
+
+      g.stdout.on('data', function (data) {
+        console.log('\x1b[32m%s\x1b[0m', (repoName ? repoName : 'root'), "> git " + toPerform);
+        console.log(data.toString());
+      });
+
+    g.stderr.on('data', function (data) {
+        console.log((repoName ? repoName : 'root') + "> git " + toPerform);
+        console.log(data.toString());
       });
     }
   },
 
   _basicPerform: function (args) {
-    var ex = require('child_process').exec
-    ex("git " + args.join(" "), function (error, stdout, stderr) {
-      if (!!error) {
-        console.log(stderr);
-        return;
-      }
+    var sp = require('child_process').spawn;
+    var g = sp("git", args);
 
-      console.log(stdout);
+    g.stdout.on('data', function (data) {
+      console.log(data.toString());
+    });
+
+    g.stderr.on('data', function (data) {
+      console.log(data.toString());
     });
   },
-
   removeRepository: function (names) {
     if (names === null || names.length === 0) { return; }
 
