@@ -192,13 +192,9 @@ switch (action) {
     Bit.initializeNew();
     break;
   case 'add-repository':
-  case 'add':
-  case '-a':
     Bit.addRepository(params);
     break;
   case 'remove-repository':
-  case 'remove':
-  case '-r':
     Bit.removeRepository(params);
     break;
   case 'on':
