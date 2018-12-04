@@ -12,7 +12,7 @@ To use in your git repo:
 
 - bit init
 
-- bit add repo_name ~/real/path/to/repo_name
+- bit add-repository repo_name ~/real/path/to/repo_name
 
 - bit status 
 -> # root git status
