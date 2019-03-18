@@ -52,8 +52,8 @@ Bit = {
     var location = process.env.PWD;
 
     if (!cb) {
-      var cfg = fs.readFileSync(location+'/.bit/config.json');
-      return cfg;
+      var cfg = fs.readFileSync(location+'/.bit/config.json','utf8');
+      return JSON.parse(cfg);
     } else {
       fs.readFile(location+'/.bit/config.json','utf8', cb);
     }
