@@ -42,7 +42,7 @@ Bit = {
 
       config.root = dir;
       config.repositories = repos || {};
-      fs.writeFile(configFile,JSON.stringify(config), function (err) {
+      fs.writeFile(configFile,JSON.stringify(config, null, "   "), function (err) {
         console.log(err ? "Error creating Bit config." : "Bit initialized successfully.");
       });
     });
@@ -61,7 +61,7 @@ Bit = {
 
   writeConfig: function (path,config,callback) {
     var location = path || process.env.PWD;
-    fs.writeFile(location+'/.bit/config.json', JSON.stringify(config), function (err) {
+    fs.writeFile(location+'/.bit/config.json', JSON.stringify(config, null, "   "), function (err) {
       if (callback) callback.call(this,err);
     });
   },
@@ -81,9 +81,41 @@ Bit = {
     console.log("Bit has been removed from "+path);
   },
 
+  addFrom: function (args) {
+    var basePath = args[0], self = this;
+
+    fs.readdir(args[0], (err, files) => {
+      var reposToAdd = {};
+      for (var i=0,l=files.length;i<l;i++) {
+        var f = files[i];
+        
+
+        reposToAdd[f+""] = basePath + "/" + f;
+      }
+
+      console.log("Repos:", reposToAdd);
+      self._updateWithRepos(reposToAdd);
+    });
+  },
+
+  _updateWithRepos: function (repos) {
+    var config = this.getConfig();
+
+    for (var key in repos) {
+      config.repositories[key] = repos[key];
+    }
+
+    this.writeConfig(null, config);
+  },
+
   addRepository: function (args) {
-    var config = this.getConfig(),
-      name = args[0], path = args[1];
+    var name = args[0], path = args[1];
+
+    this._addRepository(name, path);
+  },
+
+  _addRepository: function (name, path) {
+    var config = this.getConfig();
 
     if (!config.repositories[name]) {
       config.repositories[name] = path;
@@ -105,7 +137,7 @@ Bit = {
     var toPerform = args.join(' '),
     sp = require('child_process').spawn,
     fc;
-  
+
     if (path && !path.match(/\/$/)) { path+='/'; }
 
     fc = path[0];
@@ -194,6 +226,9 @@ switch (action) {
   case 'add-repository':
     Bit.addRepository(params);
     break;
+  case 'add-from':
+    Bit.addFrom(params);
+    break;
   case 'remove-repository':
     Bit.removeRepository(params);
     break;
@@ -206,5 +241,3 @@ switch (action) {
   default:
     Bit.proceed(argv.slice(2, argv.length));
 }
-
-
